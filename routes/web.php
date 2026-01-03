@@ -25,6 +25,9 @@ use App\Http\Controllers\AdminContactMessageController;
 */
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// members directory (public)
+Route::get('/profiles', [ProfileController::class, 'index'])->name('profiles.index');
+
 // public profile page (visible for everyone)
 Route::get('/profiles/{user}', [ProfileController::class, 'show'])->name('profiles.show');
 

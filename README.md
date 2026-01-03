@@ -1,59 +1,134 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sports Club Hub (Laravel 12)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This project was made for the Backend Web course (EhB).
+It is a small data-driven website for a sports club with authentication, profiles, news, FAQ and a contact form, plus an admin panel.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features (Assignment Requirements)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Login System
+- Register / Login / Logout
+- Remember Me
+- Forgot Password / Reset Password
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Users And Admin
+- A user is either a normal user or an admin
+- Only admins can promote or demote other users
+- Only admins can create a user manually (and choose if the new user is admin)
 
-## Learning Laravel
+### Profile Page
+- Every user has a public profile page visible for everyone (also visitors)
+- Visitors can browse a “Members” page with search
+- Logged-in users can edit their own profile
+- Profile fields are optional: Username, Birthday, Profile Photo (stored on the server), About Me text
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### News
+- Visitors can see a list of news items and a detail page per news item
+- Admins can create, edit and delete news items (Only admins can manage news)
+- News fields: Title, Image (stored on the server), Content, Published At
+- Relations:
+    - One-to-many: User (Author) -> News Items
+    - Many-to-many: News Items <-> Tags
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### FAQ
+- Visitors can see the FAQ page grouped by category
+- Admins can create, edit and delete categories and questions/answers
 
-## Laravel Sponsors
+### Contact
+- Visitors can fill in the contact form
+- On submit:
+    - The message is saved in the database
+    - The admin receives an email with the content of the form
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Extra Feature
+- Admins can view and delete all contact messages in the admin panel
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Default Admin Account (Required)
+- Name: Admin
+- Email: admin@ehb.be
+- Password: Password!321
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Setup (How To Run)
 
-## Code of Conduct
+### Requirements
+- PHP 8.2+
+- Composer
+- Node + NPM
+- A database (The teacher will use their own `.env`)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Install Steps
 
-## Security Vulnerabilities
+1) Clone the repository and enter the folder
+```bash
+git clone https://github.com/frs-bgh/sports-club-hub.git
+cd sports-club-hub
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+2) Install PHP dependencies
+```bash
+composer install
+```
 
-## License
+3) Create `.env` and generate the app key
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Windows:
+```bash
+copy .env.example .env
+php artisan key:generate
+```
+
+macOS / Linux:
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+4) Run migrations + seed (Teacher can run this)
+```bash
+php artisan migrate:fresh --seed
+```
+
+5) Create storage link (Profile Photos + News Images)
+```bash
+php artisan storage:link
+```
+
+6) Install frontend dependencies and build
+```bash
+npm install
+npm run build
+```
+
+7) Run locally
+```bash
+php artisan serve
+```
+
+Open the website in your browser:
+- http://127.0.0.1:8000
+- Or your local Herd/Valet URL (Example: http://sports-club-hub.test)
+
+---
+
+## Mail For Contact Form
+For development it is OK to use:
+```env
+MAIL_MAILER=log
+```
+
+Then the email content is written to:
+```txt
+storage/logs/laravel.log
+```
+
+---
+
+## Important Notes
+- The project supports `php artisan migrate:fresh --seed`
+- `vendor` and `node_modules` are in `.gitignore`
+- Images are stored on the public disk (`storage/app/public`) and shown via `php artisan storage:link`

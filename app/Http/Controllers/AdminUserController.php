@@ -8,12 +8,35 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminUserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::orderBy('id')->get();
+        $q = trim((string) $request->query('q', ''));
+        $role = $request->query('role', 'all'); // all | admin | user
+
+        $usersQuery = User::query()->orderBy('id');
+
+        if ($role === 'admin') {
+            $usersQuery->where('is_admin', true);
+        } elseif ($role === 'user') {
+            $usersQuery->where('is_admin', false);
+        }
+
+        if ($q !== '') {
+            $usersQuery->where(function ($sub) use ($q) {
+                $sub->where('name', 'like', "%{$q}%")
+                    ->orWhere('email', 'like', "%{$q}%")
+                    ->orWhere('username', 'like', "%{$q}%");
+            });
+        }
+
+        $users = $usersQuery->paginate(15)->withQueryString();
 
         return view('admin.users.index', [
             'users' => $users,
+            'q' => $q,
+            'role' => $role,
+            'totalUsers' => User::count(),
+            'totalAdmins' => User::where('is_admin', true)->count(),
         ]);
     }
 
@@ -66,7 +89,7 @@ class AdminUserController extends Controller
             return back()->with('error', 'you cannot delete admin@ehb.be');
         }
 
-        // optional: avoid deleting yourself
+        // avoid deleting yourself
         if ($user->id === auth()->id()) {
             return back()->with('error', 'you cannot delete your own account');
         }

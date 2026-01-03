@@ -35,4 +35,10 @@ class User extends Authenticatable
             'is_admin' => 'boolean',
         ];
     }
+
+    // one-to-many: a user (author) has many news items
+    public function newsItems()
+    {
+        return $this->hasMany(NewsItem::class, 'author_id');
+    }
 }

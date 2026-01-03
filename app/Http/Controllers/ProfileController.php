@@ -8,6 +8,38 @@ use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
+    // members directory (public, but hides admins for visitors)
+    public function index(Request $request)
+    {
+        $q = trim((string) $request->query('q', ''));
+
+        $usersQuery = User::query()
+            ->select(['id', 'name', 'email', 'username', 'profile_photo_path', 'is_admin', 'birthday'])
+            ->orderBy('name');
+
+        // visitors should not see admin accounts in the members list
+        $isAdminViewer = auth()->check() && auth()->user()->is_admin;
+        if (!$isAdminViewer) {
+            $usersQuery->where('is_admin', false);
+        }
+
+        if ($q !== '') {
+            $usersQuery->where(function ($sub) use ($q) {
+                $sub->where('name', 'like', "%{$q}%")
+                    ->orWhere('email', 'like', "%{$q}%")
+                    ->orWhere('username', 'like', "%{$q}%");
+            });
+        }
+
+        $users = $usersQuery->paginate(12)->withQueryString();
+
+        return view('profiles.index', [
+            'users' => $users,
+            'q' => $q,
+            'isAdminViewer' => $isAdminViewer,
+        ]);
+    }
+
     // public profile
     public function show(User $user)
     {
@@ -43,6 +75,8 @@ class ProfileController extends Controller
 
         $user->update($validated);
 
-        return redirect()->route('profiles.show', $user)->with('success', 'profile updated');
+        return redirect()
+            ->route('profiles.show', $user)
+            ->with('success', 'profile updated');
     }
 }

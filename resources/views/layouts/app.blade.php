@@ -17,6 +17,8 @@
             <div class="hidden md:flex items-center gap-6 text-sm">
                 <a href="{{ route('home') }}" class="text-slate-100 hover:text-white">home</a>
 
+                <a href="{{ route('profiles.index') }}" class="text-slate-100 hover:text-white">members</a>
+
                 @if (Route::has('news.index'))
                     <a href="{{ route('news.index') }}" class="text-slate-100 hover:text-white">news</a>
                 @endif
@@ -32,10 +34,10 @@
                 @auth
                     <a href="{{ route('dashboard') }}" class="text-slate-100 hover:text-white">dashboard</a>
                     <a href="{{ route('profile.edit') }}" class="text-slate-100 hover:text-white">edit profile</a>
-                    <a href="{{ route('profiles.show', auth()->user()) }}" class="text-slate-100 hover:text-white">my public profile</a>
+                    <a href="{{ route('profiles.show', auth()->user()) }}" class="text-slate-100 hover:text-white">my profile</a>
 
                     @if (auth()->user()->is_admin)
-                        <a href="{{ route('admin.users.index') }}" class="text-slate-100 hover:text-white">admin users</a>
+                        <a href="{{ route('admin.users.index') }}" class="text-slate-100 hover:text-white">admin</a>
                     @endif
                 @endauth
             </div>
@@ -84,7 +86,6 @@
 
 <main class="mx-auto max-w-6xl px-4 py-8">
     <x-flash />
-
     @yield('content')
 </main>
 </body>
